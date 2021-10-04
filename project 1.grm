@@ -1,0 +1,114 @@
+﻿"Name"     = 'Enter the name of the grammar'
+"Author"   = 'Enter your name'
+"Version"  = 'The version of the grammar and/or language'
+"About"    = 'A short description of the grammar'
+
+"Start Symbol" = <Program>
+"Case Sensitive" = 'True'
+! -------------------------------------------------
+! Character Sets
+! -------------------------------------------------
+
+{String Chars} = {Printable} + {HT} - ["]
+
+! -------------------------------------------------
+! Terminals
+! -------------------------------------------------
+FloatLiteral     = {Number}*[.]{Number}*
+StringLiteral = '"' {String Chars}* '"'
+
+! -------------------------------------------------------------
+!                           Comments
+! -------------------------------------------------------------
+
+Comment Line = '//'
+Comment Start = '/*'
+Comment End = '*/'
+! -------------------------------------------------
+! Rules
+<pico-program> ::= 'begin' <decls> <series> 'end'
+                 | 'begin' <decls> <functiondef> 'end'
+                 | 'begin' <decls> <functiondef> <function> 'end'
+<decls>        ::= 'declare' <id-type-list> ';'
+<id-type-list> ::= <id> ':' <type> <empty>
+                  | <id> ':' <type> ',' <id-type-list>
+
+<type>         ::= 'natural' |'string'
+                
+<series>       ::= <empty> 
+                  | <stat> <empty> 
+                  | <stat> ';' <series>
+<stat>         ::= <assign> | <if> | <while> | <ife> | <for>
+<assign>       ::= <id> ':=' <exp>
+<if>           ::= 'if' <exp> 'then' <series> 'else' <series> 'fi'        
+<while>        ::= 'while' <exp> 'do' <series> 'od'
+                
+<ife>          ::= 'if' <exp> 'then' <series> 'fi'         !if sem o else 
+!for
+<for>          ::= 'for' <id> '=' <natural-constant> 'to' <natural-constant> '{' <series> '}'
+                
+<exp>          ::= <primary> | <plus> | <minus> | <conc> | <rel_op>
+<primary>      ::= <id> | <natural-constant> | <string-constant> | '(' <exp> ')'
+<plus>         ::= <exp> '+' <primary>
+<minus>        ::= <exp> '-' <primary>
+<conc>         ::= <exp> '||' <primary>
+<rel_op>       ::= <exp> '==' <primary> 
+                | <exp> '=' <primary>
+                | <exp> '!=' <primary> 
+                | <exp> '<' <primary> 
+                | <exp> '<=' <primary> 
+                | <exp> '>' <primary> 
+                | <exp> '>=' <primary>      
+
+<empty>        ::=                     
+
+<id>           ::= <letter> <id-char1>!modificado
+!<id-chars>     ::= <id-char> !modificado
+!<id-char>      ::= <letters> | <digits>
+<id-char1>     ::= <letter> <id-char1> | <digit> <id-char1> | <empty>
+
+<natural-constant> ::= <digit> <digits>
+<digits>       ::= <digit> <digits> | <empty>
+<letters>       ::= <letter> <letters> | <empty> !mod
+<string-constant> ::= <quote> <string-tail>
+<string-tail>  ::= <any-char-but-quote> <string-tail> | <quote>
+<quote>        ::= '"'
+<any-char-but-quote> ::= <letter> | <digit> | <literal>
+
+letter         = {letter}
+<literal>      ::= '(' | ')' | '+' | '-' | ';' | '||' | ':' | ':='
+<letter>       ::= letter
+                ! 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+                !| 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'    
+digit          = {digit}          
+<digit>        ::= digit
+                ! '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+
+                
+! -------------------------------------------------
+!                  Function
+! -------------------------------------------------
+!definir uma função
+<functiondef> ::= <id> <parametersdef> ':' <series> 'end'
+             
+<parametersdef> ::= '(' <parameterList> ')'  
+!<parameterLists> ::= <parameterLists> ','
+!                   | <parameterList>
+!                   | <empty>
+<parameterList> ::= <id> ',' <parameterList>
+                  | <id>
+                  | <empty>
+! função definida
+<function>          ::= <id> <parameters>              
+<parameters>    ::= '(' <parameterList1> ')'
+!<parameterLists1> ::= <parameterLists1> ','
+!                   | <parameterList1>
+!                   | <empty>
+<parameterList1> ::= <id> ',' <parameterList1>
+                   | <id>               
+                   | <natural-constant> ',' <parameterList1>
+                   | <natural-constant>
+                   | <empty>    
+                                                                      
+! The grammar starts below
+<Program> ::= <pico-program>
